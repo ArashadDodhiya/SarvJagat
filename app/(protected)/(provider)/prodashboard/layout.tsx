@@ -2,8 +2,13 @@
 "use client";
 
 import Sidebar from "../components/Sidebar";
+import { ReactNode } from "react";
 
-export default function DashboardLayout({ children }) {
+interface DashboardLayoutProps {
+  children: ReactNode;
+}
+
+export default function DashboardLayout({ children }: DashboardLayoutProps) {
   return (
     <div className="flex min-h-screen bg-gray-100">
       {/* Sidebar with independent scroll */}

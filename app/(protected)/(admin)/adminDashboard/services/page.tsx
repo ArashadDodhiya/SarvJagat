@@ -3,7 +3,14 @@
 import { useState } from "react";
 import { Edit, Trash, X } from "lucide-react"; // Import icons
 
-const initialServices = [
+type Service = {
+  id: number;
+  name: string;
+  description: string;
+  category: string;
+};
+
+const initialServices: Service[] = [
   { id: 1, name: "Website Development", description: "Full stack web development services.", category: "Development" },
   { id: 2, name: "SEO Optimization", description: "Improve your site's search engine ranking.", category: "Marketing" },
 ];
@@ -11,13 +18,13 @@ const initialServices = [
 const categories = ["Development", "Marketing", "Design", "Consulting"];
 
 export default function ServiceManagementPage() {
-  const [services, setServices] = useState(initialServices);
-  const [isModalOpen, setModalOpen] = useState(false);
-  const [currentService, setCurrentService] = useState(null);
-  const [newService, setNewService] = useState({ name: "", description: "", category: "" });
-  const [searchTerm, setSearchTerm] = useState("");
+  const [services, setServices] = useState<Service[]>(initialServices);
+  const [isModalOpen, setModalOpen] = useState<boolean>(false);
+  const [currentService, setCurrentService] = useState<Service | null>(null);
+  const [newService, setNewService] = useState<Service>({ id: 0, name: "", description: "", category: "" });
+  const [searchTerm, setSearchTerm] = useState<string>("");
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setNewService((prev) => ({ ...prev, [name]: value }));
   };
@@ -25,27 +32,33 @@ export default function ServiceManagementPage() {
   const handleSaveService = () => {
     if (newService.name && newService.description && newService.category) {
       if (currentService) {
+        // Ensure that the `id` field is not overwritten while editing an existing service
         setServices((prev) =>
           prev.map((service) => (service.id === currentService.id ? { ...service, ...newService } : service))
         );
       } else {
-        setServices((prev) => [...prev, { id: Date.now(), ...newService }]);
+        // If it's a new service, add a new `id` using `Date.now()`
+        setServices((prev) => [
+          ...prev,
+          { ...newService, id: Date.now() }, // Add `id` explicitly here
+        ]);
       }
       setModalOpen(false);
-      setNewService({ name: "", description: "", category: "" });
+      setNewService({ id: 0, name: "", description: "", category: "" });
       setCurrentService(null);
     } else {
       alert("Please fill in all fields.");
     }
   };
+  
 
-  const handleEditService = (service) => {
+  const handleEditService = (service: Service) => {
     setCurrentService(service);
     setNewService(service);
     setModalOpen(true);
   };
 
-  const handleDeleteService = (id) => {
+  const handleDeleteService = (id: number) => {
     if (confirm("Are you sure you want to delete this service?")) {
       setServices((prev) => prev.filter((service) => service.id !== id));
     }

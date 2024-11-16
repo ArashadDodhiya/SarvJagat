@@ -15,13 +15,25 @@ export default function SettingsPage() {
   const [message, setMessage] = useState(""); // For feedback messages
 
   // Handle input changes
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value, type, checked } = e.target;
+  // Handle input changes
+const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const { name, value, type } = e.target;
+
+  if (type === "checkbox") {
+    // TypeScript now knows that e.target is an HTMLInputElement
+    const { checked } = e.target as HTMLInputElement; // Narrow to HTMLInputElement
     setSettings((prevSettings) => ({
       ...prevSettings,
-      [name]: type === "checkbox" ? checked : value,
+      [name]: checked, // Use `checked` for checkbox type
     }));
-  };
+  } else {
+    setSettings((prevSettings) => ({
+      ...prevSettings,
+      [name]: value, // Use `value` for text inputs and selects
+    }));
+  }
+};
+  
 
   // Handle form submission
   const handleSubmit = (e: React.FormEvent) => {

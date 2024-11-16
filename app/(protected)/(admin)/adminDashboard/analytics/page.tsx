@@ -1,4 +1,3 @@
-// app/admin/analytics/page.tsx
 "use client";
 
 import { useState } from "react";
@@ -12,10 +11,10 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import DatePicker from "react-datepicker"; // Ensure this is installed
-import "react-datepicker/dist/react-datepicker.css"; // Include DatePicker CSS
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
-// Register necessary components
+// Register necessary components for Chart.js
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -47,8 +46,8 @@ const mockData = {
 };
 
 export default function AnalyticsPage() {
-  const [startDate, setStartDate] = useState(new Date("2024-01-01"));
-  const [endDate, setEndDate] = useState(new Date());
+  const [startDate, setStartDate] = useState<Date | null>(new Date("2024-01-01"));
+  const [endDate, setEndDate] = useState<Date | null>(new Date());
 
   const kpis = {
     totalUsers: 350,
@@ -63,6 +62,20 @@ export default function AnalyticsPage() {
   const handleDownloadReport = () => {
     // Implement CSV or PDF download logic
     console.log("Report Downloaded");
+    // Example: You can use libraries like jsPDF or papaparse
+  };
+
+  const applyDateFilter = () => {
+    if (!startDate || !endDate) {
+      alert("Please select valid start and end dates.");
+      return;
+    }
+    if (startDate > endDate) {
+      alert("Start date cannot be after the end date.");
+      return;
+    }
+    console.log("Date Filter Applied:", startDate, endDate);
+    // Implement logic to filter chart data based on dates
   };
 
   return (
@@ -71,7 +84,7 @@ export default function AnalyticsPage() {
       <p>View platform analytics and performance metrics.</p>
 
       {/* Date Filter */}
-      <div className="flex space-x-4 mt-4">
+      <div className="flex flex-wrap gap-4 mt-4">
         <div>
           <label
             htmlFor="startDate"
@@ -81,10 +94,11 @@ export default function AnalyticsPage() {
           </label>
           <DatePicker
             selected={startDate}
-            onChange={(date) => setStartDate(date)}
+            onChange={(date: Date | null) => setStartDate(date)}
             className="border px-3 py-2 rounded-md"
-            dateFormat="MMMM d, yyyy" // Format for display
+            dateFormat="MMMM d, yyyy"
             placeholderText="Select start date"
+            aria-label="Select start date"
           />
         </div>
         <div>
@@ -93,17 +107,15 @@ export default function AnalyticsPage() {
           </label>
           <DatePicker
             selected={endDate}
-            onChange={(date) => setEndDate(date)}
+            onChange={(date: Date | null) => setEndDate(date)}
             className="border px-3 py-2 rounded-md"
-            dateFormat="MMMM d, yyyy" // Format for display
+            dateFormat="MMMM d, yyyy"
             placeholderText="Select end date"
+            aria-label="Select end date"
           />
         </div>
         <button
-          onClick={() => {
-            // Logic to filter data based on startDate and endDate
-            console.log("Date Filter Applied:", startDate, endDate);
-          }}
+          onClick={applyDateFilter}
           className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
         >
           Apply

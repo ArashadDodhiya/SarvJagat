@@ -1,7 +1,6 @@
-// lib/mongoose.ts
 import mongoose from 'mongoose';
 
-const MONGODB_URI: string | undefined = process.env.MONGODB_URI;
+const MONGODB_URI = process.env.MONGODB_URI;
 
 if (!MONGODB_URI) {
   throw new Error('Please define the MONGODB_URI environment variable in your .env file');
@@ -13,7 +12,8 @@ export async function connectToDatabase() {
   if (isConnected) return;
 
   try {
-    await mongoose.connect(MONGODB_URI);  // TypeScript now knows MONGODB_URI is a string
+    // Ensuring MONGODB_URI is a string when passed to mongoose.connect
+    await mongoose.connect(MONGODB_URI as string);
     isConnected = true;
     console.log('Connected to MongoDB');
   } catch (error) {

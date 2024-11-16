@@ -10,15 +10,16 @@ interface SignupRequestBody {
   password: string;
 }
 
-export async function POST(req: NextRequest) {
+export async function POST(req: NextRequest): Promise<NextResponse> {
   console.log("Received request to signup");
 
   try {
+    // Parse request body
     const { name, email, password }: SignupRequestBody = await req.json();
     console.log("Request body:", { name, email, password });
 
     // Set default role to 'serviceSeeker' automatically
-    const userRole = "serviceSeeker";
+    const userRole: string = "serviceSeeker";
 
     // Connect to the database
     await connectToDatabase();
@@ -47,10 +48,16 @@ export async function POST(req: NextRequest) {
 
     // Respond with a success message
     return NextResponse.json({ message: "User created successfully" }, { status: 201 });
-  } catch (error: any) {
+  } catch (error: unknown) {
     // Log the full error for debugging
-    console.error("Error creating user:", error);
-    console.error("Error details:", error?.response || error?.message || error);
-    return NextResponse.json({ error: error?.message || 'Error creating user' }, { status: 500 });
+    if (error instanceof Error) {
+      console.error("Error creating user:", error);
+      console.error("Error details:", error.message);
+      return NextResponse.json({ error: error.message || 'Error creating user' }, { status: 500 });
+    }
+
+    // Handle cases where the error is not an instance of Error
+    console.error("Unknown error:", error);
+    return NextResponse.json({ error: 'An unknown error occurred' }, { status: 500 });
   }
 }

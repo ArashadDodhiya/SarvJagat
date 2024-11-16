@@ -58,7 +58,7 @@ export default function ServicesPage() {
   );
 
   // Navigate to service details
-  const handleServiceClick = (id) => {
+  const handleServiceClick = (id: string | number) => {
     router.push(`/services/${id}`);
   };
 

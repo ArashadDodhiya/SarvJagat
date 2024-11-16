@@ -1,7 +1,7 @@
 // app/dashboard/services/[id]/edit/page.tsx
 "use client";
 
-import { useRouter, useParams } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 interface Service {

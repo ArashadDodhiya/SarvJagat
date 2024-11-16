@@ -1,30 +1,39 @@
-// app/admin/payments/page.tsx
 "use client";
 
 import { useState } from "react";
-import { CheckCircle, XCircle, Edit, X } from "lucide-react"; // Import icons
+import { XCircle, Edit, X } from "lucide-react"; // Import icons
+
+// Define the payment type
+type Payment = {
+  id: number;
+  user: string;
+  amount: number;
+  status: "Pending" | "Completed" | "Refunded"; // Only allow these values
+  date: string;
+};
 
 // Initial mock data for payments
-const initialPayments = [
+const initialPayments: Payment[] = [
   { id: 1, user: "John Doe", amount: 100, status: "Completed", date: "2024-10-01" },
   { id: 2, user: "Jane Smith", amount: 200, status: "Pending", date: "2024-10-02" },
 ];
 
 // Utility function to format dates
-const formatDate = (date) => new Date(date).toLocaleDateString("en-US", {
-  year: "numeric",
-  month: "long",
-  day: "numeric",
-});
+const formatDate = (date: string): string =>
+  new Date(date).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
 
 export default function PaymentManagementPage() {
-  const [payments, setPayments] = useState(initialPayments);
-  const [isModalOpen, setModalOpen] = useState(false);
-  const [currentPayment, setCurrentPayment] = useState(null);
+  const [payments, setPayments] = useState<Payment[]>(initialPayments);
+  const [isModalOpen, setModalOpen] = useState<boolean>(false);
+  const [currentPayment, setCurrentPayment] = useState<Payment | null>(null);
 
-  const handleProcessRefund = (id) => {
+  const handleProcessRefund = (id: number) => {
     if (window.confirm("Are you sure you want to process a refund for this payment?")) {
-      setPayments((prev) =>
+      setPayments((prev: Payment[]) =>
         prev.map((payment) =>
           payment.id === id ? { ...payment, status: "Refunded" } : payment
         )
@@ -32,22 +41,30 @@ export default function PaymentManagementPage() {
     }
   };
 
-  const handleEditPayment = (payment) => {
+  const handleEditPayment = (payment: Payment) => {
     setCurrentPayment(payment);
     setModalOpen(true);
   };
 
   const handleUpdatePayment = () => {
     if (currentPayment) {
-      setPayments((prev) =>
-        prev.map((payment) => (payment.id === currentPayment.id ? currentPayment : payment))
+      setPayments((prev: Payment[]) =>
+        prev.map((payment) =>
+          payment.id === currentPayment.id
+            ? {
+                ...payment,
+                status: currentPayment.status, // Ensure status matches the allowed values
+                amount: currentPayment.amount,
+              }
+            : payment
+        )
       );
     }
     setModalOpen(false);
     setCurrentPayment(null);
   };
 
-  const { user, amount, status, date } = currentPayment || {};
+  const { user, amount, status } = currentPayment || {};
 
   return (
     <div className="bg-white p-6 rounded-lg shadow">
@@ -117,7 +134,12 @@ export default function PaymentManagementPage() {
                 id="amount"
                 value={amount || ""}
                 onChange={(e) =>
-                  setCurrentPayment((prev) => ({ ...prev, amount: parseFloat(e.target.value) }))
+                  setCurrentPayment((prev) => {
+                    if (prev) {
+                      return { ...prev, amount: parseFloat(e.target.value) };
+                    }
+                    return prev;
+                  })
                 }
                 className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -126,7 +148,12 @@ export default function PaymentManagementPage() {
                 id="status"
                 value={status}
                 onChange={(e) =>
-                  setCurrentPayment((prev) => ({ ...prev, status: e.target.value }))
+                  setCurrentPayment((prev) => {
+                    if (prev) {
+                      return { ...prev, status: e.target.value as "Pending" | "Completed" | "Refunded" };
+                    }
+                    return prev;
+                  })
                 }
                 className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
               >

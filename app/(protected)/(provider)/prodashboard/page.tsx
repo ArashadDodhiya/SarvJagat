@@ -1,12 +1,13 @@
-"use client"
+"use client";
 import { Line } from "react-chartjs-2";
-import { Chart, registerables } from "chart.js";
+import { Chart, registerables, ChartOptions, ChartData } from "chart.js";
 
 // Register all necessary components
 Chart.register(...registerables);
 
 export default function DashboardOverview() {
-  const data = {
+  // Define the data with proper types
+  const data: ChartData<'line'> = {
     labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
     datasets: [
       {
@@ -19,7 +20,8 @@ export default function DashboardOverview() {
     ],
   };
 
-  const options = {
+  // Define the options with the correct type
+  const options: ChartOptions<'line'> = {
     responsive: true,
     plugins: {
       legend: {

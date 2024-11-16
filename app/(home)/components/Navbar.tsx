@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Home, User } from "lucide-react"; // Import icons
 import Link from "next/link"; // Next.js Link for navigation
 import { ModeToggle } from "./ModeToggle"; // Import ModeToggle
+import Image from "next/image"; // Import the Next.js Image component
 
 export default function Navbar() {
   const router = useRouter();
@@ -22,10 +23,12 @@ export default function Navbar() {
     <nav className="flex justify-between items-center py-4 px-6 bg-white shadow-sm dark:bg-gray-800">
       {/* Logo */}
       <div className="flex items-center">
-        <img
+        <Image
           src="/SarvJagat_Logo_Final.png" // Correct path in the public folder
           alt="Service Marketplace Logo"
-          className="w-10 h-10 mr-2" // Adjust width and height as needed
+          width={40} // Provide width for optimized loading
+          height={40} // Provide height for optimized loading
+          priority // Optional: Use for above-the-fold images
         />
       </div>
 

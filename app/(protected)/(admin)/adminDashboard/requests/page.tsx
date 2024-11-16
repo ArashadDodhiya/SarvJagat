@@ -4,18 +4,27 @@
 import { useState } from "react";
 import { CheckCircle, XCircle, Edit, X } from "lucide-react"; // Import icons
 
+// Define types for request data
+interface Request {
+  id: number;
+  user: string;
+  requestType: string;
+  status: "Pending" | "Approved" | "Rejected"; // Status should be one of these values
+}
+
 // Initial mock data for requests
-const initialRequests = [
+const initialRequests: Request[] = [
   { id: 1, user: "John Doe", requestType: "Service Inquiry", status: "Pending" },
   { id: 2, user: "Jane Smith", requestType: "Feature Request", status: "Pending" },
 ];
 
 export default function RequestManagementPage() {
-  const [requests, setRequests] = useState(initialRequests);
+  const [requests, setRequests] = useState<Request[]>(initialRequests);
   const [isModalOpen, setModalOpen] = useState(false);
-  const [currentRequest, setCurrentRequest] = useState(null);
+  const [currentRequest, setCurrentRequest] = useState<Request | null>(null); // Typing currentRequest as Request or null
 
-  const handleApproveRequest = (id) => {
+  // Handle approve request
+  const handleApproveRequest = (id: number) => {
     setRequests((prev) =>
       prev.map((request) =>
         request.id === id ? { ...request, status: "Approved" } : request
@@ -23,7 +32,8 @@ export default function RequestManagementPage() {
     );
   };
 
-  const handleRejectRequest = (id) => {
+  // Handle reject request
+  const handleRejectRequest = (id: number) => {
     if (window.confirm("Are you sure you want to reject this request?")) {
       setRequests((prev) =>
         prev.map((request) =>
@@ -33,11 +43,13 @@ export default function RequestManagementPage() {
     }
   };
 
-  const handleEditRequest = (request) => {
+  // Handle edit request
+  const handleEditRequest = (request: Request) => {
     setCurrentRequest(request);
     setModalOpen(true);
   };
 
+  // Handle update request after editing
   const handleUpdateRequest = () => {
     if (currentRequest) {
       setRequests((prev) =>
@@ -47,7 +59,7 @@ export default function RequestManagementPage() {
       );
     }
     setModalOpen(false);
-    setCurrentRequest(null);
+    setCurrentRequest(null); // Reset after update
   };
 
   // Destructure `currentRequest` for easier access
@@ -102,7 +114,7 @@ export default function RequestManagementPage() {
       </table>
 
       {/* Modal for Edit Request */}
-      {isModalOpen && (
+      {isModalOpen && currentRequest && (
         <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg shadow-lg max-w-sm w-full p-6 relative">
             <button
@@ -120,7 +132,9 @@ export default function RequestManagementPage() {
                 id="status"
                 value={status}
                 onChange={(e) =>
-                  setCurrentRequest((prev) => ({ ...prev, status: e.target.value }))
+                  setCurrentRequest((prev) =>
+                    prev ? { ...prev, status: e.target.value as "Pending" | "Approved" | "Rejected" } : prev
+                  )
                 }
                 className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
               >

@@ -1,27 +1,44 @@
-// app/admin/users/page.tsx
 "use client";
 
 import { useState } from "react";
 import { Edit, Trash, X } from "lucide-react"; // Importing icons from lucide-react
 
-const initialUsers = [
+// Define User type
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  role: "User" | "Admin" | "Moderator";
+}
+
+// Define NewUser type for form state
+interface NewUser {
+  name: string;
+  email: string;
+  role: "User" | "Admin" | "Moderator";
+}
+
+const initialUsers: User[] = [
   { id: 1, name: "John Doe", email: "john@example.com", role: "Admin" },
   { id: 2, name: "Jane Smith", email: "jane@example.com", role: "User" },
 ];
 
 export default function UserManagementPage() {
-  const [users, setUsers] = useState(initialUsers);
-  const [isModalOpen, setModalOpen] = useState(false);
-  const [currentUser, setCurrentUser] = useState(null);
-  const [newUser, setNewUser] = useState({ name: "", email: "", role: "User" });
-  const [searchTerm, setSearchTerm] = useState("");
-  const [notification, setNotification] = useState("");
+  // State for users, modal visibility, and form data
+  const [users, setUsers] = useState<User[]>(initialUsers);
+  const [isModalOpen, setModalOpen] = useState<boolean>(false);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [newUser, setNewUser] = useState<NewUser>({ name: "", email: "", role: "User" });
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [notification, setNotification] = useState<string>("");
 
-  const handleInputChange = (e) => {
+  // Handle input changes for the form
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setNewUser((prev) => ({ ...prev, [name]: value }));
   };
 
+  // Handle saving user (add or update)
   const handleSaveUser = () => {
     if (!newUser.email.includes("@")) {
       setNotification("Please enter a valid email address.");
@@ -44,22 +61,26 @@ export default function UserManagementPage() {
     resetForm();
   };
 
-  const handleEditUser = (user) => {
+  // Handle edit user
+  const handleEditUser = (user: User) => {
     setCurrentUser(user);
     setNewUser(user);
     setModalOpen(true);
   };
 
-  const handleDeleteUser = (id) => {
+  // Handle delete user
+  const handleDeleteUser = (id: number) => {
     setUsers((prev) => prev.filter((user) => user.id !== id));
     setNotification("User deleted successfully!");
   };
 
+  // Reset the form
   const resetForm = () => {
     setNewUser({ name: "", email: "", role: "User" });
     setCurrentUser(null);
   };
 
+  // Filter users based on search term
   const filteredUsers = users.filter(
     (user) =>
       user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||

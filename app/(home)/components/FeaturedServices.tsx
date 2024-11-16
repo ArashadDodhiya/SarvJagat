@@ -1,7 +1,9 @@
 import { Briefcase, Wrench } from "lucide-react";  // Import service icons
+import { ReactNode } from "react";
+// import React from "react";
 
 // Define a simple card component
-function Card({ children, className }) {
+function Card({ children, className }: { children: ReactNode; className?: string }) {
   return (
     <div className={`p-4 shadow-md bg-white rounded-lg ${className}`}>
       {children}
